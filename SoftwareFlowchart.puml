@@ -1,0 +1,30 @@
+@startuml
+class SMBus_Data {
+    + Temperature: float
+    + Cell_voltages: float
+    + Pack_current: float
+    void getData()
+}
+class Displayed_Data {
+    + State_of_Charge: int
+    + Cell_Health: int
+    + Power_Output: float
+    void writeScreen()
+    void writeIoT()
+}
+class ML {
+    void getCharge()
+    void getHealth()
+}
+class SMBus_Commands {
+    + IC_Addresses: ints
+    void sendCommand()
+}
+SMBus_Commands --> Battery_Management_Board : GPIO
+Battery_Management_Board --> SMBus_Data : GPIO
+SMBus_Data -[hidden]up- Battery_Management_Board
+SMBus_Data -[hidden]right- SMBus_Commands
+SMBus_Data --> ML
+SMBus_Data --> Displayed_Data
+ML --> Displayed_Data
+@enduml
