@@ -1,17 +1,18 @@
 @startuml
+    
+skinparam BackgroundColor #212121
+skinparam ArrowColor white
 
 [Battery Management IC]
 [SMBus Interface]
 [Li-Ion Cells]
 [Pi 4]
-[LDC Screen]
 cloud "IoT Monitoring" as IoT
 
 [Li-Ion Cells] --> [Battery Management IC]
 [Battery Management IC] --> [Li-Ion Cells]
 [Battery Management IC] --> [SMBus Interface]
 [SMBus Interface] --> [Pi 4]
-[Pi 4] --> [LDC Screen]
 [Pi 4] --> IoT
 
 @enduml
