@@ -1,5 +1,4 @@
 import smbus2
-import time
 
 class BMS:
     def __init__(self, addr, cell_capacity=3350, bus_num=1):
