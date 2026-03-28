@@ -6,7 +6,7 @@ from datetime import datetime
 import Data_Preprocessing
 import ML_Model
 
-addr = 0xb
+addr = 0x0b
 cell_capacity = 3350
 bus_num = 1
 
@@ -25,7 +25,7 @@ def get_data():
         "timestamp": datetime.now().isoformat(),
         "voltage": bms.get_pack_voltage(),
         "temperature": bms.get_temperature(),
-        "current": bms.get_current(),
+        "current": -1*bms.get_current(),
     }
 
 while True:

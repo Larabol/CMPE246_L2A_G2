@@ -6,6 +6,11 @@ class BMS:
         self.addr = addr
         self.capacity = cell_capacity
 
+    def twos_complement(value, bits):
+        if value & (1 << (bits - 1)):
+            value -= (1 << bits)
+        return value
+
     def check_bit(num, pos):
         mask = 1 << pos
         return (num & mask) != 0
@@ -22,7 +27,7 @@ class BMS:
         return sum(self.bus.read_word_data(self.addr, 0x3F)+self.bus.read_word_data(self.addr, 0x3E)+self.bus.read_word_data(self.addr, 0x3D))*(5/3)
     
     def get_current(self):
-        return self.bus.read_word_data(self.addr, 0x0A)
+        return self.twos_complement(self.bus.read_word_data(self.addr, 0x0A))/1000
     
     def get_temperature(self):
         return self.bus.read_word_data(self.addr, 0x08)
