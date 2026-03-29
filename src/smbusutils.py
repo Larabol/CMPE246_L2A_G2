@@ -16,24 +16,23 @@ class BMS:
         return (num & mask) != 0
     
     def get_cell_voltage(self, cell):
-        if cell >= 1 and cell <= 3:
+        if cell >= 1 and cell <= 5:
             cell_reg = 0x40-cell
             return self.bus.read_word_data(self.addr, cell_reg)
-        elif cell == 4 or cell == 5:
-            cell_reg = 0x43-cell
-            return self.bus.read_word_data(self.addr, cell_reg)
+        else: 
+            return 0
         
     def get_pack_voltage(self):
-        return sum(self.bus.read_word_data(self.addr, 0x3F)+self.bus.read_word_data(self.addr, 0x3E)+self.bus.read_word_data(self.addr, 0x3D))*(5/3)
+        return self.bus.read_word_data(self.addr, 0x09)
     
     def get_current(self):
         return self.twos_complement(self.bus.read_word_data(self.addr, 0x0A))/1000
     
     def get_temperature(self):
-        return self.bus.read_word_data(self.addr, 0x08)
+        return self.bus.read_word_data(self.addr, 0x08)*10 - 273
 
-    def get_coulombs(self):
-        return (100 - self.bus.read_word_data(self.addr, 0x0E))*self.capacity*3.6
+    def get_soc(self):
+        return self.bus.read_word_data(self.addr, 0x0E)
     
     def get_operation_status(self):
         status_out = ["", "", "", "", "", ""]
