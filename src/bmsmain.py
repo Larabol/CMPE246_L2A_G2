@@ -1,4 +1,4 @@
-import src.smbusutils as smbu
+import smbusutils as smbu
 import pandas as pd
 from collections import deque
 import time
