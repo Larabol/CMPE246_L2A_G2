@@ -22,35 +22,6 @@ class DataPreprocessingScript:
         self.full_charge_current_threshold = full_charge_current_threshold
         self.enable_full_charge_reset = enable_full_charge_reset
 
-    def is_full_charge_condition(self, voltage, current):
-        if not self.enable_full_charge_reset:
-            return False
-
-        return (
-            voltage >= self.full_charge_voltage and
-            abs(current) <= self.full_charge_current_threshold
-        )
-
-    def calculate_soc(self, df):
-        soc = self.initial_soc
-        soc_values = []
-
-        for _, row in df.iterrows():
-            current = row["current"]        # positive = discharge
-            dt_seconds = row["dt_seconds"]
-            voltage = row["voltage"]
-
-            if self.is_full_charge_condition(voltage, current):
-                soc = 100.0
-            else:
-                delta_ah = current * dt_seconds / 3600.0
-                soc = soc - (delta_ah / self.battery_capacity_ah) * 100.0
-
-            soc = max(0.0, min(100.0, soc))
-            soc_values.append(soc)
-
-        df["soc"] = soc_values
-        return df
 
     def calculate_runtime_left(self, df):
         runtime_left_minutes = []
@@ -80,7 +51,6 @@ class DataPreprocessingScript:
         df["dt_seconds"] = df["timestamp"].diff().dt.total_seconds()
         df["dt_seconds"] = df["dt_seconds"].fillna(1.0)
 
-        df = self.calculate_soc(df)
         df = self.calculate_runtime_left(df)
 
         
