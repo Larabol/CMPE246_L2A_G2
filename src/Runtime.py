@@ -35,11 +35,9 @@ class RunBMSScripts:
         preprocessor = DataPreprocessingScript(
             input_file=self.raw_data_file,
             output_file=self.processed_data_file,
-            battery_capacity_ah=10.0,  # Change based off our battery
-            initial_soc=100.0,         # Change based off our battery
-            full_charge_voltage=54.6,  # Change based off our battery
-            full_charge_current_threshold=0.2,  # Change based off our battery
-            enable_full_charge_reset=True
+            battery_capacity_ah = 16.75,  # Specific to battery
+            full_charge_voltage = 20.5,  # Specific to battery
+            full_charge_current_threshold = 0.2,  ## Specific to battery
         )
         preprocessor.preprocess_data()
 
