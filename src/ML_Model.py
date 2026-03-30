@@ -1,9 +1,8 @@
 import pandas as pd
-import joblib
-from xgboost import XGBClassifier, XGBRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, mean_absolute_error
+import pickle
 
+from sklearn.metrics import accuracy_score, mean_absolute_error
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 class MLModelScript:
     def __init__(self, input_file):
@@ -48,6 +47,17 @@ class MLModelScript:
         df["temp_future"] = df["temperature"].shift(-self.temp_lookahead_steps)
         return df
 
+    def chronological_split(self, X, y, test_size = 0.2):
+        split_index = int(len(X) * (1 - test_size))
+
+        X_train = X.iloc[:split_index]
+        X_test = X.iloc[split_index:]
+
+        y_train = y.iloc[:split_index]
+        y_test = y.iloc[split_index:]
+
+        return X_train, X_test, y_train, y_test
+        
     def train_models(self):
         df = pd.read_csv(self.input_file)
 
@@ -56,8 +66,6 @@ class MLModelScript:
 
         df = df.dropna(subset=self.feature_columns + ["fault_label", "temp_future"]).copy()
 
-        
-
         ## Fault model
         X_fault = df[self.feature_columns]
         y_fault = df["fault_label"]
@@ -65,17 +73,13 @@ class MLModelScript:
         print("Fault label distribution:")
         print(y_fault.value_counts())
 
-        X_train_fault, X_test_fault, y_train_fault, y_test_fault = train_test_split(
-            X_fault, y_fault, test_size=0.2, random_state=42    #, stratify=y_fault add back for a dataset with observed errors
-        )
+        X_train_fault, X_test_fault, y_train_fault, y_test_fault = self.chronological_split(X_fault, y_fault, test_size = 0.2)
 
-        fault_model = XGBClassifier(
-            objective = "binary:logistic",
-            eval_metric = "logloss",
-            n_estimators = 150,
-            max_depth = 4,
-            learning_rate = 0.05,
-            random_state = 42
+        fault_model = RandomForestClassifier(
+            n_estimators = 200,
+            max_depth = 8,
+            random_state = 42,
+            n_jobs = -1
         )
 
         fault_model.fit(X_train_fault, y_train_fault)
@@ -87,16 +91,13 @@ class MLModelScript:
         X_temp = df[self.feature_columns]
         y_temp = df["temp_future"]
 
-        X_train_temp, X_test_temp, y_train_temp, y_test_temp = train_test_split(
-            X_temp, y_temp, test_size=0.2, random_state=42
-        )
+        X_train_temp, X_test_temp, y_train_temp, y_test_temp = self.chronological_split(X_temp, y_temp, test_size = 0.2)
 
-        temperature_model = XGBRegressor(
-            objective = "reg:squarederror",
+        temperature_model = RandomForestRegressor(
             n_estimators = 200,
-            max_depth = 4,
-            learning_rate = 0.05,
-            random_state = 42
+            max_depth = 8,
+            random_state = 42,
+            n_jobs = -1
         )
 
         temperature_model.fit(X_train_temp, y_train_temp)
@@ -104,12 +105,14 @@ class MLModelScript:
 
         print("Future Temperature Model MAE:", mean_absolute_error(y_test_temp, temp_predictions))
 
-        fault_model.save_model("fault_model.json")
-        temperature_model.save_model("temp_model.json")
+        with open("fault_model.pkl", "wb") as f:
+            pickle.dump(fault_model, f)
+                  
+        with open("temp_model.pkl", "wb") as f:
+            pickle.dump(temperature_model, f)
 
-        print("Saved fault_model.json")
-        print("Saved temp_model.json")
-
+        print("Saved fault_model.pkl")
+        print("Saved temp_model.pkl")
 
 if __name__ == "__main__":
     model_script = MLModelScript("battery_data_processed.csv")
