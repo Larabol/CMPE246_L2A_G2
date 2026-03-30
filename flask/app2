@@ -1,0 +1,72 @@
+from flask import Flask, render_template, jsonify
+import pandas as pd
+
+app = Flask(__name__)
+
+CSV_FILE = "bmsdata.csv"
+MAX_ROWS = 200  # Limit rows shown in table
+CHART_POINTS = 100  # Points to plot
+
+@app.route("/")
+def index():
+    return render_template("index2.html")
+
+@app.route("/data")
+def data():
+    try:
+        df = pd.read_csv(CSV_FILE)
+        df.rename(columns={
+            'timestamp': 'time',
+            'voltage': 'voltage',
+            'current': 'current',
+            'temperature': 'temperature',
+            'soc': 'soc'
+        }, inplace=True)
+
+        df['time'] = pd.to_datetime(df['time'])
+
+        # Latest values for stat cards
+        latest = df.iloc[-1]
+
+        # Chart data (last N points)
+        chart_df = df.tail(CHART_POINTS)
+        chart_data = {
+            "time": chart_df['time'].dt.strftime('%H:%M:%S').tolist(),
+            "voltage": chart_df['voltage'].tolist(),
+            "current": chart_df['current'].tolist(),
+            "temperature": chart_df['temperature'].tolist(),
+            "soc": chart_df['soc'].tolist(),
+        }
+
+        # Table data (last N rows, newest first)
+        table_df = df.tail(MAX_ROWS).iloc[::-1]
+        table_data = []
+        for _, row in table_df.iterrows():
+            table_data.append({
+                "time": row['time'].strftime('%Y-%m-%d %H:%M:%S'),
+                "voltage": round(float(row['voltage']), 2),
+                "current": round(float(row['current']), 2),
+                "temperature": round(float(row['temperature']), 2),
+                "soc": round(float(row['soc']), 2),
+            })
+
+        return jsonify({
+            "ok": True,
+            "latest": {
+                "voltage": round(float(latest['voltage']), 2),
+                "current": round(float(latest['current']), 2),
+                "temperature": round(float(latest['temperature']), 2),
+                "soc": round(float(latest['soc']), 2),
+                "time": latest['time'].strftime('%H:%M:%S'),
+            },
+            "chart": chart_data,
+            "table": table_data,
+            "total_rows": len(df),
+        })
+
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

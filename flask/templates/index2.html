@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BMS Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0b0e14;
+      --surface: #131720;
+      --border:  #1f2a3a;
+      --accent:  #00d4ff;
+      --amber:   #ffb800;
+      --red:     #ff4560;
+      --green:   #00e5a0;
+      --text:    #cdd6e8;
+      --muted:   #4a5568;
+      --mono:    'Share Tech Mono', monospace;
+      --sans:    'Barlow', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .logo h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.08em; color: #fff; }
+    .logo span { font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; display: block; }
+
+    .header-right { display: flex; align-items: center; gap: 20px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 7px;
+      font-family: var(--mono); font-size: 12px; color: var(--green);
+      border: 1px solid var(--green);
+      padding: 4px 12px; border-radius: 2px;
+      letter-spacing: 0.1em;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+    #last-update { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+    /* ── Layout ── */
+    main { padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Stat Cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 700px) { .cards { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card.v { border-top-color: var(--accent); }
+    .card.c { border-top-color: var(--amber); }
+    .card.t { border-top-color: var(--red); }
+
+    .card-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 10px; }
+    .card-value { font-family: var(--mono); font-size: 32px; color: #fff; line-height: 1; }
+    .card-unit  { font-size: 14px; color: var(--muted); margin-left: 4px; }
+    .card-sub   { font-size: 11px; color: var(--muted); margin-top: 8px; font-family: var(--mono); }
+
+    .card-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--border); width: 100%; }
+    .card-bar-fill { height: 100%; transition: width 0.8s ease; }
+    .card.v .card-bar-fill { background: var(--accent); }
+    .card.c .card-bar-fill { background: var(--amber); }
+    .card.t .card-bar-fill { background: var(--red); }
+
+    /* ── Charts ── */
+    .charts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+
+    .chart-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px;
+    }
+    .panel-title {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--muted); margin-bottom: 16px;
+    }
+    .panel-title strong { color: var(--text); font-weight: 600; }
+    .chart-wrap { position: relative; height: 180px; }
+
+    /* ── Table ── */
+    .table-panel { background: var(--surface); border: 1px solid var(--border); }
+    .table-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+    }
+    .table-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+    .table-title strong { color: var(--text); font-weight: 600; }
+    #row-count { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+    .table-wrap { overflow-x: auto; max-height: 340px; overflow-y: auto; }
+    table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+    thead { position: sticky; top: 0; z-index: 2; }
+    thead th {
+      background: #0e1520; color: var(--muted);
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+      padding: 10px 16px; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:hover { background: rgba(0,212,255,0.04); }
+    tbody tr:first-child td { color: var(--accent); }
+    tbody td { padding: 9px 16px; color: var(--text); }
+    tbody td:first-child { color: var(--muted); }
+
+    /* ── Status bar ── */
+    .statusbar {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 8px 32px;
+      display: flex; gap: 24px; align-items: center;
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+      position: fixed; bottom: 0; left: 0; right: 0;
+    }
+    #status-ok  { color: var(--green); }
+    #status-err { color: var(--red); display: none; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <h1>BMS MONITOR</h1>
+      <span>Battery Management System</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <span id="last-update">--:--:--</span>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Stat Cards -->
+  <div class="cards">
+    <div class="card v">
+      <div class="card-label">Voltage</div>
+      <div class="card-value"><span id="val-voltage">—</span><span class="card-unit">mV</span></div>
+      <div class="card-sub">Latest reading</div>
+      <div class="card-bar"><div class="card-bar-fill" id="bar-voltage" style="width:0%"></div></div>
+    </div>
+    <div class="card c">
+      <div class="card-label">Current</div>
+      <div class="card-value"><span id="val-current">—</span><span class="card-unit">mA</span></div>
+      <div class="card-sub">Latest reading</div>
+      <div class="card-bar"><div class="card-bar-fill" id="bar-current" style="width:0%"></div></div>
+    </div>
+    <div class="card t">
+      <div class="card-label">Temperature</div>
+      <div class="card-value"><span id="val-temp">—</span><span class="card-unit">°C</span></div>
+      <div class="card-sub">Latest reading</div>
+      <div class="card-bar"><div class="card-bar-fill" id="bar-temp" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts">
+    <div class="chart-panel">
+      <div class="panel-title"><strong>Voltage</strong> · mV vs Time</div>
+      <div class="chart-wrap"><canvas id="chart-voltage"></canvas></div>
+    </div>
+    <div class="chart-panel">
+      <div class="panel-title"><strong>Current</strong> · mA vs Time</div>
+      <div class="chart-wrap"><canvas id="chart-current"></canvas></div>
+    </div>
+    <div class="chart-panel">
+      <div class="panel-title"><strong>Temperature</strong> · °C vs Time</div>
+      <div class="chart-wrap"><canvas id="chart-temp"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-panel">
+    <div class="table-header">
+      <div class="table-title"><strong>Data Log</strong> · Recent Readings</div>
+      <span id="row-count">— rows</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Voltage (mV)</th>
+            <th>Current (mA)</th>
+            <th>Temperature (°C)</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<div style="height:40px"></div>
+<div class="statusbar">
+  <span id="status-ok">● CONNECTED</span>
+  <span id="status-err">● CONNECTION ERROR</span>
+  <span>REFRESH · <span id="countdown">5</span>s</span>
+  <span id="total-rows">TOTAL ROWS · —</span>
+</div>
+
+<script>
+const CHART_DEFAULTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: { duration: 400 },
+  plugins: { legend: { display: false }, tooltip: {
+    backgroundColor: '#131720', borderColor: '#1f2a3a', borderWidth: 1,
+    titleColor: '#4a5568', bodyColor: '#cdd6e8',
+    titleFont: { family: "'Share Tech Mono'" },
+    bodyFont:  { family: "'Share Tech Mono'" },
+  }},
+  scales: {
+    x: {
+      ticks: { color: '#4a5568', font: { family: "'Share Tech Mono'", size: 10 }, maxRotation: 0, maxTicksLimit: 6 },
+      grid:  { color: '#1a2030' },
+    },
+    y: {
+      ticks: { color: '#4a5568', font: { family: "'Share Tech Mono'", size: 10 } },
+      grid:  { color: '#1a2030' },
+    }
+  }
+};
+
+function makeChart(id, color) {
+  const ctx = document.getElementById(id).getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 0, 180);
+  grad.addColorStop(0, color + '33');
+  grad.addColorStop(1, color + '00');
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{ data: [], borderColor: color, backgroundColor: grad,
+        borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.3 }]
+    },
+    options: CHART_DEFAULTS
+  });
+}
+
+const charts = {
+  voltage:     makeChart('chart-voltage',  '#00d4ff'),
+  current:     makeChart('chart-current',  '#ffb800'),
+  temperature: makeChart('chart-temp',     '#ff4560'),
+};
+
+function updateChart(key, labels, data) {
+  const c = charts[key];
+  c.data.labels = labels;
+  c.data.datasets[0].data = data;
+  c.update('none');
+}
+
+async function fetchData() {
+  try {
+    const res = await fetch('/data');
+    if (!res.ok) throw new Error(res.statusText);
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error);
+
+    const l = d.latest;
+    document.getElementById('val-voltage').textContent = l.voltage;
+    document.getElementById('val-current').textContent = l.current;
+    document.getElementById('val-temp').textContent    = l.temperature;
+    document.getElementById('last-update').textContent = l.time;
+
+    // Progress bars — adjust min/max to match your real data ranges
+    setBar('bar-voltage', l.voltage,     2800, 4200);
+    setBar('bar-current', l.current,     0,    5000);
+    setBar('bar-temp',    l.temperature, 0,    60);
+
+    const c = d.chart;
+    updateChart('voltage',     c.time, c.voltage);
+    updateChart('current',     c.time, c.current);
+    updateChart('temperature', c.time, c.temperature);
+
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = d.table.map(r => `
+      <tr>
+        <td>${r.time}</td>
+        <td>${r.voltage}</td>
+        <td>${r.current}</td>
+        <td>${r.temperature}</td>
+      </tr>`).join('');
+
+    document.getElementById('row-count').textContent  = d.table.length + ' rows shown';
+    document.getElementById('total-rows').textContent = 'TOTAL ROWS · ' + d.total_rows;
+
+    document.getElementById('status-ok').style.display  = '';
+    document.getElementById('status-err').style.display = 'none';
+
+  } catch (err) {
+    console.error('Fetch error:', err);
+    document.getElementById('status-ok').style.display  = 'none';
+    document.getElementById('status-err').style.display = '';
+  }
+}
+
+function setBar(id, val, min, max) {
+  const pct = Math.min(100, Math.max(0, ((val - min) / (max - min)) * 100));
+  document.getElementById(id).style.width = pct + '%';
+}
+
+const INTERVAL = 5000;
+let remaining = INTERVAL / 1000;
+
+fetchData();
+setInterval(fetchData, INTERVAL);
+setInterval(() => {
+  remaining--;
+  if (remaining <= 0) remaining = INTERVAL / 1000;
+  document.getElementById('countdown').textContent = remaining;
+}, 1000);
+</script>
+</body>
+</html>
