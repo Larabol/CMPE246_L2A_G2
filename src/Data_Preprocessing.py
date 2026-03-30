@@ -8,11 +8,9 @@ class DataPreprocessingScript:
         self,
         input_file,
         output_file,
-        battery_capacity_ah=16.75, ## Change based off our battery
-        initial_soc=100.0, ## Change based off our battery
-        full_charge_voltage=20.5, ## Change based off our battery
-        full_charge_current_threshold=0.2, ## Change based off our battery
-        enable_full_charge_reset=True
+        battery_capacity_ah=16.75, ## Specific to battery
+        full_charge_voltage=20.5, ## Specific to battery
+        full_charge_current_threshold=0.2, ## Specific to battery
     ):
         self.input_file = input_file
         self.output_file = output_file
@@ -109,10 +107,8 @@ if __name__ == "__main__":
     preprocessor = DataPreprocessingScript(
         input_file="battery_data.csv",
         output_file="battery_data_processed.csv",
-        battery_capacity_ah=10.0, ## Change based off our battery
-        initial_soc=100.0, ## Change based off our battery
-        full_charge_voltage=54.6, ## Change based off our battery
-        full_charge_current_threshold=0.2, ## Change based off our battery
-        enable_full_charge_reset=True
+        battery_capacity_ah = 16.75, ## Specific to battery
+        full_charge_voltage = 20.5, ## Specific to battery
+        full_charge_current_threshold = 0.2, ## Specific to battery
     )
     preprocessor.preprocess_data()
