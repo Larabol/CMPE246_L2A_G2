@@ -1,5 +1,5 @@
 import pandas as pd
-import joblib
+import pickle
 import json
 from Data_Preprocessing import DataPreprocessingScript
 from smbusutils import BMS
@@ -11,14 +11,17 @@ class RunBMSScripts:
     def __init__(self, raw_data_file, processed_data_file, fault_model_file, temp_model_file):
         self.raw_data_file = raw_data_file
         self.processed_data_file = processed_data_file
-        self.fault_model = joblib.load(fault_model_file)
-        self.temp_model = joblib.load(temp_model_file)
+
+        with open(fault_model_file, "rb") as f:
+            self.fault_model = pickle.load(f)
+
+        with open(temp_model_file, "rb") as f:
+            self.temp_model = pickle.load(f)
 
         self.feature_columns = [
             "voltage",
             "current",
             "temperature",
-            "cumulative_coulombs",
             "soc",
             "abs_current",
             "power",
@@ -40,19 +43,19 @@ class RunBMSScripts:
 
         # preprocess latest raw CSV
         preprocessor = DataPreprocessingScript(
-            input_file=self.raw_data_file,
-            output_file=self.processed_data_file,
-            battery_capacity_ah = 16.75,  # Specific to battery
-            full_charge_voltage = 20.5,  # Specific to battery
+            input_file = self.raw_data_file,
+            output_file = self.processed_data_file,
+            battery_capacity_ah = 16.75,  ## Specific to battery
+            full_charge_voltage = 20.5,  ## Specific to battery
             full_charge_current_threshold = 0.2,  ## Specific to battery
         )
         preprocessor.preprocess_data()        
 
     def run_predictions(self, bus):
-        # generate latest data
+        ## generate latest data
         self.update_data(bus)
 
-        # read processed CSV
+        ## read processed CSV
         df = pd.read_csv(self.processed_data_file)
         df = df.dropna(subset=self.feature_columns).copy()
 
@@ -85,7 +88,7 @@ class RunBMSScripts:
         print(f"Predicted Future Temperature: {predicted_future_temp:.2f} C")
         print("-" * 40)
 
-        # save latest output to JSON
+        ## save latest output to JSON
         latest_output = {
             "Timestamp": str(latest_row["timestamp"]),
             "Voltage": float(latest_row["voltage"]),
@@ -99,16 +102,18 @@ class RunBMSScripts:
         }
 
         with open("latest_status.json", "w") as f:
-            json.dump(latest_output, f, indent=4)
+            json.dump(latest_output, f, indent = 4)
 
 
 if __name__ == "__main__":
     runner = RunBMSScripts(
         raw_data_file="battery_data.csv",
         processed_data_file="battery_data_processed.csv",
-        fault_model_file="fault_model.joblib",
-        temp_model_file="temp_model.joblib"
+        fault_model_file="fault_model.pkl",
+        temp_model_file="temp_model.pkl"
     )
     count = 0 
     print("runner initialized")
     bms = BMS(0x0b)
+    
+    
