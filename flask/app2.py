@@ -14,10 +14,12 @@ def index():
 @app.route("/data")
 def data():
     try:
-        # Tab-separated file, columns: timestamp, voltage, temperature, current
-        df = pd.read_csv(CSV_FILE, sep='\t')
+        # Tab-separated file, columns: timestamp, voltage, temperature, current (soc optional)
+        df = pd.read_csv(CSV_FILE)
 
         df['time'] = pd.to_datetime(df['timestamp'])
+
+        has_soc = 'soc' in df.columns
 
         # Latest values for stat cards
         latest = df.iloc[-1]
@@ -29,6 +31,7 @@ def data():
             "voltage":     chart_df['voltage'].tolist(),
             "current":     chart_df['current'].tolist(),
             "temperature": chart_df['temperature'].tolist(),
+            "soc":         chart_df['soc'].tolist() if has_soc else [],
         }
 
         # Table data (last N rows, newest first)
@@ -40,14 +43,17 @@ def data():
                 "voltage":     round(float(row['voltage']), 2),
                 "current":     round(float(row['current']), 2),
                 "temperature": round(float(row['temperature']), 2),
+                "soc":         round(float(row['soc']), 2) if has_soc else None,
             })
 
         return jsonify({
             "ok": True,
+            "has_soc": has_soc,
             "latest": {
                 "voltage":     round(float(latest['voltage']), 2),
                 "current":     round(float(latest['current']), 2),
                 "temperature": round(float(latest['temperature']), 2),
+                "soc":         round(float(latest['soc']), 2) if has_soc else None,
                 "time":        latest['time'].strftime('%H:%M:%S'),
             },
             "chart": chart_data,
