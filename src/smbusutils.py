@@ -11,6 +11,7 @@ class BMS:
         self.capacity = cell_capacity
         self.max_points = 1000
         self.buffer = deque(maxlen=self.max_points)
+        print("bms defined")
 
     def twos_complement(self, value, bits):
         if value & (1 << (bits - 1)):
