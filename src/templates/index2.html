@@ -8,11 +8,34 @@
     body { background: #1a1a1a; color: #ccc; font-family: 'Times New Roman', Times, serif; font-size: 13px; padding: 20px; }
     h2   { color: #fff; font-weight: normal; margin: 20px 0 8px; }
 
+    table {
+          width: 100%;
+          border-collapse: collapse;
+      }
+      table, th, td {
+          border: 1px solid black;
+      }
+      th, td {
+          padding: 5px;
+          text-align: left;
+      }
+      table.bms tr:nth-child(even) {
+          background-color: #eee;
+      }
+      table.bms tr:nth-child(odd) {
+          background-color: #fff;
+      }
+      
     table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
     th { background: #2a2a2a; color: #888; font-weight: normal; text-align: left; padding: 6px 10px; border: 1px solid #333; }
     td { padding: 6px 10px; border: 1px solid #2a2a2a; }
     tr:first-child td { color: #fff; }
     .na { color: #444; }
+
+      table.bms th {
+          background-color: black;
+          color: white;
+      }
 
     .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
     @media (max-width: 600px) { .charts { grid-template-columns: 1fr; } }
