@@ -1,12 +1,34 @@
 from flask import Flask, render_template, jsonify
 import pandas as pd
 import json
+import threading
+import time
+from Runtime import RunBMSScripts
 
 app = Flask(__name__)
 
 CSV_FILE = "bmsdata.csv"
 MAX_ROWS = 20      # Limit rows shown in table
 CHART_POINTS = 100  # Points to plot
+
+def bms_loop():
+    bms = RunBMSScripts(
+        addr = 0x0b,
+        raw_data_file="battery_data.csv",
+        processed_data_file="battery_data_processed.csv",
+        fault_model_file="fault_model.joblib",
+        temp_model_file="temp_model.joblib"
+    )
+    count = 0
+
+    while True:
+        try:
+            bms.run_predictions()
+            time.sleep(2)
+
+        except Exception as e:
+            print(f"BMS loop error: {e}")
+            time.sleep(2)
 
 @app.route("/")
 def index():
@@ -78,4 +100,6 @@ def latest_status():
         
 
 if __name__ == "__main__":
+    thread = threading.Thread(target=bms_loop, daemon=True)
+    thread.start()
     app.run(host='0.0.0.0', port=5000, debug=False)

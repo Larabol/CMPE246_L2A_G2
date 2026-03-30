@@ -4,7 +4,7 @@ from collections import deque
 import time
 from datetime import datetime
 import Data_Preprocessing
-# import ML_Model
+import ML_Model
 
 addr = 0x0b
 cell_capacity = 3350
@@ -19,6 +19,8 @@ preprocessor = Data_Preprocessing.DataPreprocessingScript(
     "bmsdata.csv",
     "processedbmsdata.csv"
 )
+
+ml = ML_Model.MLModelScript("processedbmsdata.csv")
 
 def get_data():
     timestamp = datetime.now().isoformat()
@@ -39,11 +41,19 @@ def get_data():
         "soc": soc
     }
 
+for i in range(max_points):
+    buffer.append(get_data())
+    df = pd.DataFrame(buffer)
+    df.to_csv("bmsdata.csv", index=False)
+    if len(buffer) % 50 == 0:
+        preprocessor.preprocess_data()
+    time.sleep(1)
+
+ml.train_models()
+
 while True:
     buffer.append(get_data())
     df = pd.DataFrame(buffer)
     df.to_csv("bmsdata.csv", index=False)
     if len(buffer) % 50 == 0:
         preprocessor.preprocess_data()
-
-    time.sleep(1)

@@ -17,7 +17,6 @@ class DataPreprocessingScript:
 
         # Battery / SoC settings
         self.battery_capacity_ah = battery_capacity_ah
-        self.initial_soc = initial_soc
         self.full_charge_voltage = full_charge_voltage
         self.full_charge_current_threshold = full_charge_current_threshold
 

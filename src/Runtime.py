@@ -1,15 +1,17 @@
 import pandas as pd
 import joblib
-from Data_Preprocessing import DataPreprocessingScript
 import json
-
+from Data_Preprocessing import DataPreprocessingScript
+from smbusutils import BMS
+import time
 
 class RunBMSScripts:
-    def __init__(self, raw_data_file, processed_data_file, fault_model_file, temp_model_file):
+    def __init__(self, addr, raw_data_file, processed_data_file, fault_model_file, temp_model_file):
         self.raw_data_file = raw_data_file
         self.processed_data_file = processed_data_file
         self.fault_model = joblib.load(fault_model_file)
         self.temp_model = joblib.load(temp_model_file)
+        self.addr = addr
 
         self.feature_columns = [
             "voltage",
@@ -30,8 +32,12 @@ class RunBMSScripts:
             "d_temperature",
         ]
 
-    def run_predictions(self):
-        # preprocess latest raw CSV first
+    def update_data(self):
+        # generate new raw CSV
+        bms = BMS(self.addr)
+        bms.write_raw_data(self.raw_data_file)
+
+        # preprocess latest raw CSV
         preprocessor = DataPreprocessingScript(
             input_file=self.raw_data_file,
             output_file=self.processed_data_file,
@@ -39,7 +45,11 @@ class RunBMSScripts:
             full_charge_voltage = 20.5,  # Specific to battery
             full_charge_current_threshold = 0.2,  ## Specific to battery
         )
-        preprocessor.preprocess_data()
+        preprocessor.preprocess_data()        
+
+    def run_predictions(self):
+        # generate latest data
+        self.update_data()
 
         # read processed CSV
         df = pd.read_csv(self.processed_data_file)
@@ -92,10 +102,14 @@ class RunBMSScripts:
 
 
 if __name__ == "__main__":
-    runner = RunBMSScripts(
+    bms = RunBMSScripts(
+        addr = 0x0b,
         raw_data_file="battery_data.csv",
         processed_data_file="battery_data_processed.csv",
         fault_model_file="fault_model.joblib",
         temp_model_file="temp_model.joblib"
     )
-    runner.run_predictions()
+    count = 0   
+    while True:
+        bms.run_predictions
+        time.sleep(5)

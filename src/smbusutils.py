@@ -1,10 +1,16 @@
 import smbus2
+import time
+import datetime
+import pandas as pd
+from collections import deque
 
 class BMS:
     def __init__(self, addr, cell_capacity=3350, bus_num=1):
         self.bus = smbus2.SMBus(bus_num)
         self.addr = addr
         self.capacity = cell_capacity
+        self.max_points = 1000
+        self.buffer = deque(maxlen=self.max_points)
 
     def twos_complement(self, value, bits):
         if value & (1 << (bits - 1)):
@@ -37,6 +43,33 @@ class BMS:
     def get_soc(self):
         return self.bus.read_word_data(self.addr, 0x0E)
     
+    def get_data(self):
+        timestamp = datetime.now().isoformat()
+        time.sleep(0.1)
+        voltage = self.get_pack_voltage()
+        time.sleep(0.1)
+        temperature = self.get_temperature()
+        time.sleep(0.1)
+        current = -1*self.get_current()
+        time.sleep(0.1)
+        soc = bms.get_soc()
+
+        return {
+            "timestamp": timestamp,
+            "voltage": voltage,
+            "temperature": temperature,
+            "current": current,
+            "soc": soc
+        }
+    
+    def write_raw_data(self, csv):
+        self.csv = csv
+        self.buffer.append(self.get_data())
+        df = pd.DataFrame(self.buffer)
+        df.to_csv("bmsdata.csv", index=False)
+
+
+
     def get_operation_status(self):
         status_out = ["", "", "", "", "", ""]
         status_in = self.bus.read_word_data(self.addr, 0x54)
