@@ -66,12 +66,12 @@ class MLModelScript:
         )
 
         fault_model = XGBClassifier(
-            objective="binary:logistic",
-            eval_metric="logloss",
-            n_estimators=150,
-            max_depth=4,
-            learning_rate=0.05,
-            random_state=42
+            objective = "binary:logistic",
+            eval_metric = "logloss",
+            n_estimators = 150,
+            max_depth = 4,
+            learning_rate = 0.05,
+            random_state = 42
         )
 
         fault_model.fit(X_train_fault, y_train_fault)
@@ -88,11 +88,11 @@ class MLModelScript:
         )
 
         temperature_model = XGBRegressor(
-            objective="reg:squarederror",
-            n_estimators=200,
-            max_depth=4,
-            learning_rate=0.05,
-            random_state=42
+            objective = "reg:squarederror",
+            n_estimators = 200,
+            max_depth = 4,
+            learning_rate = 0.05,
+            random_state = 42
         )
 
         temperature_model.fit(X_train_temp, y_train_temp)
