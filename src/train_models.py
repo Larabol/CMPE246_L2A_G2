@@ -1,4 +1,4 @@
-from ML_Model import MLModelScript
+import time
 from smbusutils import BMS
 from Data_Preprocessing import DataPreprocessingScript
 
@@ -6,9 +6,9 @@ addr = 0x0b
 raw_data_file = "bmsdata.csv"
 processed_data_file = "battery_data_processed.csv"
 
-def update_data(self):
+
+def update_data():
         # generate new raw CSV
-        bms = BMS(addr)
         bms.write_raw_data(raw_data_file)
 
         # preprocess latest raw CSV
@@ -22,7 +22,8 @@ def update_data(self):
         preprocessor.preprocess_data() 
 
 if __name__ == "__main__":
-    ml = MLModelScript(
-        input_file="battery_data_processed.csv"
-    )
-    ml.train_models()
+    for i in range(1000):
+        bms = BMS(addr)
+        update_data()
+        print("updated data") 
+        time.sleep(5)

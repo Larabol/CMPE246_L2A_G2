@@ -1,0 +1,2 @@
+timestamp,voltage,temperature,current,soc,dt_seconds,runtime_left_minutes,abs_current,power,voltage_lag1,current_lag1,temperature_lag1,avg_voltage_5,avg_current_5,avg_temp_5,d_voltage,d_current,d_temperature
+2026-03-30 04:47:05.717521,20425,25,-0.0,91,1.0,,0.0,-0.0,,,,,,,,,

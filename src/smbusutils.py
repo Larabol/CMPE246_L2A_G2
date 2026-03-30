@@ -1,6 +1,6 @@
 import smbus2
 import time
-import datetime
+from datetime import datetime
 import pandas as pd
 from collections import deque
 
@@ -38,21 +38,22 @@ class BMS:
         return current
     
     def get_temperature(self):
-        return self.bus.read_word_data(self.addr, 0x08)*0.1 - 273
+        return int(self.bus.read_word_data(self.addr, 0x08)*0.1 - 273)
 
     def get_soc(self):
         return self.bus.read_word_data(self.addr, 0x0E)
     
     def get_data(self):
         timestamp = datetime.now().isoformat()
-        time.sleep(0.1)
+        time.sleep(0.2)
         voltage = self.get_pack_voltage()
-        time.sleep(0.1)
+        time.sleep(0.2)
         temperature = self.get_temperature()
-        time.sleep(0.1)
+        time.sleep(0.2)
         current = -1*self.get_current()
-        time.sleep(0.1)
-        soc = bms.get_soc()
+        time.sleep(0.2)
+        soc = self.get_soc()
+        time.sleep(0.2)
 
         return {
             "timestamp": timestamp,
@@ -64,7 +65,8 @@ class BMS:
     
     def write_raw_data(self, csv):
         self.csv = csv
-        self.buffer.append(self.get_data())
+        data = self.get_data()
+        self.buffer.append(data)
         df = pd.DataFrame(self.buffer)
         df.to_csv("bmsdata.csv", index=False)
 
@@ -114,9 +116,14 @@ class BMS:
 if __name__ == "__main__":
     bms = BMS(0x0b)
     cell_1 = bms.get_cell_voltage(1)
+    time.sleep(0.2)
     cell_2 = bms.get_cell_voltage(2)
+    time.sleep(0.2)
     cell_3 = bms.get_cell_voltage(3)
+    time.sleep(0.2)
     cell_4 = bms.get_cell_voltage(4)
+    time.sleep(0.2)
     cell_5 = bms.get_cell_voltage(5)
+    time.sleep(0.2)
     print(f"V1: {cell_1}\nV2: {cell_2}\nV3: {cell_3}\nV4: {cell_4}\nV5: {cell_5}")
-    print(bms.get_operation_status())
+    print(bms.get_data())
