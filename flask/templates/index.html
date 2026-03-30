@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Battery Pack </title>
+</head>
+<body>
+    <h1>Battery Management System Data</h1>
+    <table border="1">
+        <tr>
+            <th>Time</th>
+            <th>Voltage (V)</th>
+            <th>Current (A)</th>
+            <th>Temperature (°C)</th>
+            <th>State of Charge (%)</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row.time }}</td>
+            <td>{{ row.voltage }}</td>
+            <td>{{ row.current }}</td>
+            <td>{{ row.temperature }}</td>
+            <td>{{ row.soc }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
