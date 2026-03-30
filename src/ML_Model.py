@@ -11,8 +11,8 @@ class MLModelScript:
 
         
         self.min_voltage = 17.5 ## Specific to battery
-        self.max_voltage = 20.5 ## Specific to battery
-        self.max_current = 4.875 ## Specific to battery
+        self.max_voltage = 20410 ## Specific to battery
+        self.max_current = 290 ## Specific to battery
         self.max_temperature = 40 ## Specific to battery
 
         self.temp_lookahead_steps = 10
@@ -21,7 +21,6 @@ class MLModelScript:
             "voltage",
             "current",
             "temperature",
-            "cumulative_coulombs",
             "soc",
             "abs_current",
             "power",
@@ -57,12 +56,17 @@ class MLModelScript:
 
         df = df.dropna(subset=self.feature_columns + ["fault_label", "temp_future"]).copy()
 
+        
+
         ## Fault model
         X_fault = df[self.feature_columns]
         y_fault = df["fault_label"]
 
+        print("Fault label distribution:")
+        print(y_fault.value_counts())
+
         X_train_fault, X_test_fault, y_train_fault, y_test_fault = train_test_split(
-            X_fault, y_fault, test_size=0.2, random_state=42, stratify=y_fault
+            X_fault, y_fault, test_size=0.2, random_state=42    #, stratify=y_fault add back for a dataset with observed errors
         )
 
         fault_model = XGBClassifier(
