@@ -23,4 +23,4 @@ def get_data():
 
 while True:
     print(get_data())
-    time.sleep(1)
+    time.sleep(5)
