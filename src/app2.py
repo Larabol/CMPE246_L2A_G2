@@ -16,7 +16,7 @@ def bms_loop():
 
     while True:
         try:
-            bms.write_raw_data()
+            bms.write_raw_data("bmsdata.csv")
             time.sleep(2)
 
         except Exception as e:
