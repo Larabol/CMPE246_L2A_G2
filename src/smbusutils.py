@@ -77,3 +77,13 @@ class BMS:
             status_out[5] = "safe"
 
         return status_out
+
+if __name__ == "__main__":
+    bms = BMS(0x0b)
+    cell_1 = bms.get_cell_voltage(1)
+    cell_2 = bms.get_cell_voltage(2)
+    cell_3 = bms.get_cell_voltage(3)
+    cell_4 = bms.get_cell_voltage(4)
+    cell_5 = bms.get_cell_voltage(5)
+    print(f"V1: {cell_1}\nV2: {cell_2}\nV3: {cell_3}\nV4: {cell_4}\nV5: {cell_5}")
+    print(bms.get_operation_status())

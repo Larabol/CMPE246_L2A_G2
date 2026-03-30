@@ -36,7 +36,7 @@ def get_data():
         "voltage": voltage,
         "temperature": temperature,
         "current": current,
-        
+        "soc": soc
     }
 
 while True:
