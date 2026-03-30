@@ -10,10 +10,10 @@ class MLModelScript:
         self.input_file = input_file
 
         
-        self.min_voltage = 17.5 ## Change based off our project
-        self.max_voltage = 20.5 ## Change based off our project
-        self.max_current = 4.875 ## Change based off our project
-        self.max_temperature = 333.0 ## Change based off our project
+        self.min_voltage = 17.5 ## Specific to battery
+        self.max_voltage = 20.5 ## Specific to battery
+        self.max_current = 4.875 ## Specific to battery
+        self.max_temperature = 333.0 ## Specific to battery
 
         self.temp_lookahead_steps = 10
 
