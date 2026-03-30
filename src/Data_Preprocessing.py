@@ -20,7 +20,6 @@ class DataPreprocessingScript:
         self.initial_soc = initial_soc
         self.full_charge_voltage = full_charge_voltage
         self.full_charge_current_threshold = full_charge_current_threshold
-        self.enable_full_charge_reset = enable_full_charge_reset
 
 
     def calculate_runtime_left(self, df):
