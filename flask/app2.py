@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify
 import pandas as pd
+import json
 
 app = Flask(__name__)
 
@@ -64,6 +65,17 @@ def data():
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
+@app.route("/latest_status")
+def latest_status():
+    try:
+        with open("latest_status.json", "r") as f:
+            status_data = json.load(f)
+        return jsonify(status_data)
+    except FileNotFoundError:
+        return jsonify({"Ok": False, "Error": "latest_status.json not found"}), 404
+    except Exception as e:
+        return jsonify({"Ok": False, "Error": str(e)}), 500
+        
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=False)
