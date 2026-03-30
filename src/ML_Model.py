@@ -104,11 +104,11 @@ class MLModelScript:
 
         print("Future Temperature Model MAE:", mean_absolute_error(y_test_temp, temp_predictions))
 
-        joblib.dump(fault_model, "fault_model.joblib")
-        joblib.dump(temperature_model, "temp_model.joblib")
+        fault_model.save_model("fault_model.json")
+        temperature_model.save_model("temp_model.json")
 
-        print("Saved fault_model.joblib")
-        print("Saved temp_model.joblib")
+        print("Saved fault_model.json")
+        print("Saved temp_model.json")
 
 
 if __name__ == "__main__":

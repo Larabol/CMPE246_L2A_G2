@@ -4,6 +4,7 @@ import json
 from Data_Preprocessing import DataPreprocessingScript
 from smbusutils import BMS
 import time
+from xgboost import XGBClassifier, XGBRegressor
 
 print('imported BMS')
 
@@ -11,8 +12,10 @@ class RunBMSScripts:
     def __init__(self, raw_data_file, processed_data_file, fault_model_file, temp_model_file):
         self.raw_data_file = raw_data_file
         self.processed_data_file = processed_data_file
-        self.fault_model = joblib.load(fault_model_file)
-        self.temp_model = joblib.load(temp_model_file)
+        self.fault_model = XGBClassifier()
+        self.fault_model.load_model(fault_model_file)
+        self.temp_model = XGBRegressor()
+        self.temp_model.load_model(fault_model_file)
 
         self.feature_columns = [
             "voltage",
@@ -106,8 +109,8 @@ if __name__ == "__main__":
     runner = RunBMSScripts(
         raw_data_file="battery_data.csv",
         processed_data_file="battery_data_processed.csv",
-        fault_model_file="fault_model.joblib",
-        temp_model_file="temp_model.joblib"
+        fault_model_file="fault_model.json",
+        temp_model_file="temp_model.json"
     )
     count = 0 
     print("runner initialized")
