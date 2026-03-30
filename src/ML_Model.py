@@ -57,7 +57,7 @@ class MLModelScript:
 
         df = df.dropna(subset=self.feature_columns + ["fault_label", "temp_future"]).copy()
 
-        # Fault model
+        ## Fault model
         X_fault = df[self.feature_columns]
         y_fault = df["fault_label"]
 
@@ -79,7 +79,7 @@ class MLModelScript:
 
         print("Fault Model Accuracy:", accuracy_score(y_test_fault, fault_predictions))
 
-        # Future temperature model
+        ## Future temperature model
         X_temp = df[self.feature_columns]
         y_temp = df["temp_future"]
 
