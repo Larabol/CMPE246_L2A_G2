@@ -9,8 +9,8 @@ from smbusutils import BMS
 app = Flask(__name__)
 
 CSV_FILE = "bmsdata.csv"
-MAX_ROWS = 10      # Limit rows shown in table
-CHART_POINTS = 100  # Points to plot
+MAX_ROWS = 10     
+CHART_POINTS = 100  
 
 addr=0x0b
 bus = BMS(addr)
@@ -40,7 +40,7 @@ def index():
 @app.route("/data")
 def data():
     try:
-        # Tab-separated file, columns: timestamp, voltage, temperature, current (soc optional)
+        # Tab-separated file, columns
         df = pd.read_csv(CSV_FILE)
 
         df['time'] = pd.to_datetime(df['timestamp'])
@@ -50,7 +50,7 @@ def data():
         # Latest values for stat cards
         latest = df.iloc[-1]
 
-        # Chart data (last N points)
+        # Chart data
         chart_df = df.tail(CHART_POINTS)
         chart_data = {
             "time":        chart_df['time'].dt.strftime('%H:%M:%S').tolist(),
@@ -60,7 +60,7 @@ def data():
             "soc":         chart_df['soc'].tolist() if has_soc else [],
         }
 
-        # Table data (last N rows, newest first)
+        # Table data
         table_df = df.tail(MAX_ROWS).iloc[::-1]
         table_data = []
         for _, row in table_df.iterrows():
