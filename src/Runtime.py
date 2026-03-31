@@ -4,6 +4,7 @@ import json
 from Data_Preprocessing import DataPreprocessingScript
 from smbusutils import BMS
 import time
+from xgboost import XGBClassifier, XGBRegressor
 
 print('imported BMS')
 
