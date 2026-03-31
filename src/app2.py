@@ -16,7 +16,7 @@ addr=0x0b
 bus = BMS(addr)
 def bms_loop():
     bms = RunBMSScripts(
-        raw_data_file="battery_data.csv",
+        raw_data_file="bmsdata.csv",
         processed_data_file="battery_data_processed.csv",
         fault_model_file="fault_model.pkl",
         temp_model_file="temp_model.pkl"
