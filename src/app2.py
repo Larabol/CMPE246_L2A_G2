@@ -9,7 +9,7 @@ from smbusutils import BMS
 app = Flask(__name__)
 
 CSV_FILE = "bmsdata.csv"
-MAX_ROWS = 20      # Limit rows shown in table
+MAX_ROWS = 10      # Limit rows shown in table
 CHART_POINTS = 100  # Points to plot
 
 addr=0x0b
