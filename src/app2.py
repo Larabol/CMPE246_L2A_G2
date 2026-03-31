@@ -16,8 +16,8 @@ def bms_loop():
         addr = 0x0b,
         raw_data_file="battery_data.csv",
         processed_data_file="battery_data_processed.csv",
-        fault_model_file="fault_model.joblib",
-        temp_model_file="temp_model.joblib"
+        fault_model_file="fault_model.pkl",
+        temp_model_file="temp_model.pkl"
     )
     count = 0
 
