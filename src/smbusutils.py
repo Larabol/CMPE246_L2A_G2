@@ -34,7 +34,7 @@ class BMS:
     
     def get_current(self):
         raw = self.bus.read_word_data(self.addr, 0x0B)
-        raw = ((raw & 0xFF) << 8) | (raw >> 8)
+        #raw = ((raw & 0xFF) << 8) | (raw >> 8)
         current = self.twos_complement(raw, 16) / 100
         return current
     
