@@ -49,8 +49,7 @@ class DataPreprocessingScript:
         df["dt_seconds"] = df["timestamp"].diff().dt.total_seconds()
         df["dt_seconds"] = df["dt_seconds"].fillna(1.0)
 
-        df = self.calculate_runtime_left(df)
-
+        df["runtime_left_minutes"] = self.calculate_runtime_left(df)
         
         df["abs_current"] = df["current"].abs()
         df["power"] = df["voltage"] * df["current"]
