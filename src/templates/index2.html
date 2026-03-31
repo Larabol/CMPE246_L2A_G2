@@ -21,7 +21,7 @@
       }
 
     .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
-    @media (max-width: 600px) { .charts { grid-template-columns: 1fr; } }
+    @media (max-width: 300px) { .charts { grid-template-columns: 1fr; } }
     .chart-box { background: #222; padding: 12px; }
     .chart-label { color: #fff; font-size: 18px; margin-bottom: 8px; }
 
@@ -52,19 +52,19 @@
   <div class="charts">
     <div class="chart-box">
       <div class="chart-label">Voltage (mV)</div>
-      <canvas id="chart-voltage" height="150"></canvas>
+      <canvas id="chart-voltage" height="120"></canvas>
     </div>
     <div class="chart-box">
       <div class="chart-label">Current (mA)</div>
-      <canvas id="chart-current" height="150"></canvas>
+      <canvas id="chart-current" height="120"></canvas>
     </div>
     <div class="chart-box">
       <div class="chart-label">Temperature (°C)</div>
-      <canvas id="chart-temp" height="150"></canvas>
+      <canvas id="chart-temp" height="120"></canvas>
     </div>
     <div class="chart-box">
       <div class="chart-label">SOC (%)</div>
-      <canvas id="chart-soc" height="150"></canvas>
+      <canvas id="chart-soc" height="120"></canvas>
     </div>
   </div>
 
