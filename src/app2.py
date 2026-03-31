@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import threading
 import time
-from smbusutils import BMS
+from Runtime import RunBMSScripts
 
 app = Flask(__name__)
 
@@ -12,12 +12,20 @@ MAX_ROWS = 20      # Limit rows shown in table
 CHART_POINTS = 100  # Points to plot
 
 def bms_loop():
-    bms = BMS(0x0b)
+    bms = RunBMSScripts(
+        addr = 0x0b,
+        raw_data_file="battery_data.csv",
+        processed_data_file="battery_data_processed.csv",
+        fault_model_file="fault_model.pkl",
+        temp_model_file="temp_model.pkl"
+    )
+    count = 0
 
     while True:
         try:
-            bms.write_raw_data("bmsdata.csv")
+            bms.run_predictions()
             time.sleep(2)
+            print("hello")
 
         except Exception as e:
             print(f"BMS loop error: {e}")
@@ -93,6 +101,6 @@ def latest_status():
         
 
 if __name__ == "__main__":
-    #thread = threading.Thread(target=bms_loop, daemon=True)
-    #thread.start()
+    thread = threading.Thread(target=bms_loop, daemon=True)
+    thread.start()
     app.run(host='0.0.0.0', port=5000, debug=False)
