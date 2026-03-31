@@ -4,6 +4,7 @@ import json
 import threading
 import time
 from Runtime import RunBMSScripts
+from smbusutils import BMS
 
 app = Flask(__name__)
 
@@ -11,6 +12,8 @@ CSV_FILE = "bmsdata.csv"
 MAX_ROWS = 20      # Limit rows shown in table
 CHART_POINTS = 100  # Points to plot
 
+addr=0x0b
+bus = BMS(addr)
 def bms_loop():
     bms = RunBMSScripts(
         raw_data_file="battery_data.csv",
@@ -22,7 +25,7 @@ def bms_loop():
 
     while True:
         try:
-            bms.run_predictions()
+            bms.run_predictions(bus)
             time.sleep(2)
             print("hello")
 
