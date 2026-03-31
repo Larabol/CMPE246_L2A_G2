@@ -35,7 +35,7 @@ class BMS:
     def get_current(self):
         raw = self.bus.read_word_data(self.addr, 0x0B)
         #raw = ((raw & 0xFF) << 8) | (raw >> 8)
-        current = self.twos_complement(raw, 16) / 100
+        current = self.twos_complement(raw, 16) 
         return current
     
     def get_temperature(self):
@@ -46,15 +46,16 @@ class BMS:
     
     def get_data(self):
         timestamp = datetime.now().isoformat()
-        time.sleep(0.2)
+        time.sleep(0.1)
         voltage = self.get_pack_voltage()
-        time.sleep(0.2)
+        time.sleep(0.1)
         temperature = self.get_temperature()
-        time.sleep(0.2)
+        time.sleep(0.1)
         current = -1*self.get_current()
-        time.sleep(0.2)
+        time.sleep(0.1)
         soc = self.get_soc()
-        time.sleep(0.2)
+        time.sleep(0.1)
+
 
         return {
             "timestamp": timestamp,
