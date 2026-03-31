@@ -11,7 +11,7 @@ class MLModelScript:
         
         self.min_voltage = 17.5 ## Specific to battery
         self.max_voltage = 20410 ## Specific to battery
-        self.max_current = 290 ## Specific to battery
+        self.max_current = 3000 ## Specific to battery
         self.max_temperature = 40 ## Specific to battery
 
         self.temp_lookahead_steps = 10

@@ -30,8 +30,8 @@ class DataPreprocessingScript:
 
             if current > 0.05:
                 remaining_capacity_ah = (soc / 100.0) * self.battery_capacity_ah
-                runtime_hours = remaining_capacity_ah / current
-                runtime_minutes = runtime_hours * 60.0
+                runtime_hours = remaining_capacity_ah*1000 / current
+                runtime_minutes = int(runtime_hours * 60.0)
             else:
                 runtime_minutes = np.nan
 
