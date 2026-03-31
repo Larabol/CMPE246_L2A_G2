@@ -55,7 +55,7 @@ def data():
         table_data = []
         for _, row in table_df.iterrows():
             table_data.append({
-                "time":        row['time'].strftime('%Y-%m-%d %H:%M:%S'),
+                "time":        row['time'].strftime('%Y/%m/%d %H:%M:%S'),
                 "voltage":     round(float(row['voltage']), 2),
                 "current":     round(float(row['current']), 2),
                 "temperature": round(float(row['temperature']), 2),
@@ -93,6 +93,6 @@ def latest_status():
         
 
 if __name__ == "__main__":
-    thread = threading.Thread(target=bms_loop, daemon=True)
-    thread.start()
+    #thread = threading.Thread(target=bms_loop, daemon=True)
+    #thread.start()
     app.run(host='0.0.0.0', port=5000, debug=False)

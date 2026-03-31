@@ -42,7 +42,7 @@ def data():
         table_data = []
         for _, row in table_df.iterrows():
             table_data.append({
-                "time":        row['time'].strftime('%Y-%m-%d %H:%M:%S'),
+                "time":        row['time'].strftime('%Y/%m/%d %H:%M:%S'),
                 "voltage":     round(float(row['voltage']), 2),
                 "current":     round(float(row['current']), 2),
                 "temperature": round(float(row['temperature']), 2),

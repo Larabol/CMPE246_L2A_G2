@@ -5,32 +5,15 @@
   <title>BMS Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    body { background: #1a1a1a; color: #ccc; font-family: 'Times New Roman', Times, serif; font-size: 13px; padding: 20px; }
+    body { background: #1a1a1a; color: #ccc; font-family: 'Times-New-Roman', Times, serif; font-size: 15px; padding: 20px; }
     h2   { color: #fff; font-weight: normal; margin: 20px 0 8px; }
 
-    table {
-          width: 100%;
-          border-collapse: collapse;
-      }
-      table, th, td {
-          border: 1px solid black;
-      }
-      th, td {
-          padding: 5px;
-          text-align: left;
-      }
-      table.bms tr:nth-child(even) {
-          background-color: #eee;
-      }
-      table.bms tr:nth-child(odd) {
-          background-color: #fff;
-      }
-      
     table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    th { background: #2a2a2a; color: #888; font-weight: normal; text-align: left; padding: 6px 10px; border: 1px solid #333; }
+    th { background: #2a2a2a; color: #fff; font-weight: normal; text-align: left; padding: 6px 10px; border: 1px solid #333; }
     td { padding: 6px 10px; border: 1px solid #2a2a2a; }
     tr:first-child td { color: #fff; }
-    .na { color: #444; }
+    td:nth-child(1) { word-spacing: 20px;}
+    .na { color: #fff; }
 
       table.bms th {
           background-color: black;
@@ -40,14 +23,14 @@
     .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
     @media (max-width: 600px) { .charts { grid-template-columns: 1fr; } }
     .chart-box { background: #222; padding: 12px; }
-    .chart-label { color: #666; font-size: 11px; margin-bottom: 8px; }
+    .chart-label { color: #fff; font-size: 18px; margin-bottom: 8px; }
 
-    #status { color: #555; margin-top: 12px; font-size: 11px; }
+    #status { color: #555; margin-top: 12px; font-size: 13px; }
   </style>
 </head>
 <body>
 
-  <h2>BMS — Battery Management System</h2>
+  <h2>BMS (Battery Management System)</h2>
 
   <!-- Table -->
   <table id="data-table">
@@ -69,19 +52,19 @@
   <div class="charts">
     <div class="chart-box">
       <div class="chart-label">Voltage (mV)</div>
-      <canvas id="chart-voltage" height="120"></canvas>
+      <canvas id="chart-voltage" height="150"></canvas>
     </div>
     <div class="chart-box">
       <div class="chart-label">Current (mA)</div>
-      <canvas id="chart-current" height="120"></canvas>
+      <canvas id="chart-current" height="150"></canvas>
     </div>
     <div class="chart-box">
       <div class="chart-label">Temperature (°C)</div>
-      <canvas id="chart-temp" height="120"></canvas>
+      <canvas id="chart-temp" height="150"></canvas>
     </div>
     <div class="chart-box">
       <div class="chart-label">SOC (%)</div>
-      <canvas id="chart-soc" height="120"></canvas>
+      <canvas id="chart-soc" height="150"></canvas>
     </div>
   </div>
 
@@ -111,8 +94,8 @@ function makeChart(id, color) {
       animation: false,
       plugins: { legend: { display: false } },
       scales: {
-        x: { ticks: { color: '#555', font: { family: 'monospace', size: 10 }, maxTicksLimit: 5, maxRotation: 0 }, grid: { color: '#2a2a2a' } },
-        y: { ticks: { color: '#555', font: { family: 'monospace', size: 10 } }, grid: { color: '#2a2a2a' } }
+        x: { ticks: { color: '#888', font: { family: 'Times-New-Roman', size: 10 }, maxTicksLimit: 5, maxRotation: 0 }, grid: { color: '#2a2a2a' } },
+        y: { ticks: { color: '#888', font: { family: 'Times-New-Romam', size: 10 } }, grid: { color: '#2a2a2a' } }
       }
     }
   });
@@ -153,8 +136,10 @@ async function fetchData() {
       charts.soc.update('none');
     }
 
+    const now = new Date().toLocaleTimeString();
+
     document.getElementById('status').textContent =
-      'last updated: ' + d.latest.time + ' · ' + d.total_rows + ' rows total · refreshing in 5s';
+      'last refreshed: ' + now + ' · refreshing every 1s';
 
   } catch (e) {
     document.getElementById('status').textContent = 'error: ' + e.message;
@@ -190,8 +175,8 @@ async function fetchLiveStatus() {
 fetchData();
 fetchLiveStatus();
   
-setInterval(fetchData, 5000);
-SetInterval(fetchLivestatus, 5000);
+setInterval(fetchData, 1100);
+SetInterval(fetchLivestatus, 1100);
 </script>
 </body>
 </html>
