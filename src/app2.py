@@ -13,7 +13,6 @@ CHART_POINTS = 100  # Points to plot
 
 def bms_loop():
     bms = RunBMSScripts(
-        addr = 0x0b,
         raw_data_file="battery_data.csv",
         processed_data_file="battery_data_processed.csv",
         fault_model_file="fault_model.pkl",
