@@ -47,3 +47,11 @@ Custom Hardware Design
 - IoT Functionality: Local network access through a web server, modular and scalable system design
 
 - Web-Based Monitoring Interface: Real-time battery data visualization through a browser-based dashboard using FastAPI and Grafana, enables remote monitoring and logging of voltage, temperature, and battery metrics over a local network
+
+How to Use:
+
+1. Run generate_dataset.py to create a dataset to train the temperature and fault models
+
+2. Run train_models.py to train the models from your dataset
+
+3. Run app2.py on Raspberry Pi or other device connected over SMBus to start the webserver and data logging
