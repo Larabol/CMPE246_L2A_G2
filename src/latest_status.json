@@ -1,0 +1,11 @@
+{
+    "Timestamp": "2026-03-30 19:38:38.406824",
+    "Voltage": 20306.0,
+    "Current": 1.0,
+    "Temperature": 25.0,
+    "SoC": 86.0,
+    "Runtime_Minutes_Left": 864300.0,
+    "Fault_Prediction": 0,
+    "Fault_Probability_Percent": 0.0,
+    "Predicted_Future_Temp": 25.0
+}
