@@ -4,9 +4,6 @@ import json
 from Data_Preprocessing import DataPreprocessingScript
 from smbusutils import BMS
 import time
-from xgboost import XGBClassifier, XGBRegressor
-
-print('imported BMS')
 
 class RunBMSScripts:
     def __init__(self, raw_data_file, processed_data_file, fault_model_file, temp_model_file):

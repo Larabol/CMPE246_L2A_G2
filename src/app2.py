@@ -26,7 +26,7 @@ def bms_loop():
     while True:
         try:
             bms.run_predictions(bus)
-            time.sleep(2)
+            time.sleep(0.5)
 
         except Exception as e:
             print(f"BMS loop error: {e}")
